@@ -14,6 +14,7 @@ class StoreRoomRequest extends FormRequest
     private const PASSWORD = "password";
     private const PASSWORD_CONFIRMATION = "password_confirmation";
     private const IMAGE = "image";
+    private const PARTICIPANTS = 'participants';
 
     public function authorize(): bool
     {
@@ -53,6 +54,15 @@ class StoreRoomRequest extends FormRequest
                 'image',
                 'max:2048'
             ],
+            self::PARTICIPANTS => [
+                'nullable',
+                'array',
+            ],
+            self::PARTICIPANTS . '.*' => [
+                'integer',
+                'distinct',
+                'exists:users,id',
+            ],
         ];
     }
 
@@ -79,6 +89,11 @@ class StoreRoomRequest extends FormRequest
     public function getPasswordConfirmation(): ?string
     {
         return $this->input(self::PASSWORD_CONFIRMATION);
+    }
+
+    public function getParticipantIds(): array
+    {
+        return array_map('intval', $this->input(self::PARTICIPANTS, []));
     }
 
     public function messages(): array
