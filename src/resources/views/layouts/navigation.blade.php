@@ -1,188 +1,190 @@
-<nav x-data="{ open: false, createOpen: false, isPrivate: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+{{-- resources/views/layouts/navigation.blade.php --}}
+<nav
+    x-data="{ open:false, createOpen:false, isPrivate:false }"
+    class="sticky top-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur-md"
+>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            {{-- Лого/бренд --}}
+            <div class="flex items-center gap-3">
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
+                    <span class="inline-block h-2.5 w-2.5 rounded-full bg-indigo-500"></span>
+                    <span class="text-sm font-semibold tracking-wide text-white">
+                        {{ config('app.name','App') }}
+                    </span>
+                </a>
+
+                {{-- Десктопные ссылки --}}
+                <div class="hidden sm:ml-8 sm:flex sm:items-center sm:gap-1">
+                    <a href="{{ route('home') }}"
+                       class="px-3 py-2 text-sm font-medium rounded-lg
+                              {{ request()->routeIs('home') ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                        Главная
                     </a>
-                </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    <a href="{{ route('rooms.index') }}"
+                       class="px-3 py-2 text-sm font-medium rounded-lg
+                              {{ request()->routeIs('rooms.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                        Комнаты
+                    </a>
 
-                    {{-- NEW: Комнаты --}}
-                    <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
-                        {{ __('Комнаты') }}
-                    </x-nav-link>
+                    {{-- Кнопка создания комнаты --}}
+                    <button type="button"
+                            @click="createOpen = true"
+                            class="ml-2 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/60">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Создать
+                    </button>
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                {{-- NEW: Кнопка создания комнаты --}}
-{{--                <button--}}
-{{--                    type="button"--}}
-{{--                    @click="createOpen = true"--}}
-{{--                    class="me-4 inline-flex items-center px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none transition"--}}
-{{--                >--}}
-{{--                    + {{ __('Создать комнату') }}--}}
-{{--                </button>--}}
-
-                <!-- Settings Dropdown -->
+            {{-- Правый блок: профиль --}}
+            <div class="hidden sm:flex sm:items-center sm:gap-3">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
+                        <button
+                            class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20">
+                            <div class="truncate max-w-[160px]">{{ Auth::user()->name }}</div>
+                            <svg class="h-4 w-4 text-slate-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill="currentColor" d="M5.8 7.2a1 1 0 0 1 1.4 0L10 10l2.8-2.8a1 1 0 1 1 1.4 1.4l-3.5 3.5a1 1 0 0 1-1.4 0L5.8 8.6a1 1 0 0 1 0-1.4z"/>
+                            </svg>
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            Профиль
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
                                              onclick="event.preventDefault(); this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                Выйти
                             </x-dropdown-link>
                         </form>
                     </x-slot>
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+            {{-- Бургер для мобилы --}}
+            <div class="flex items-center sm:hidden">
+                <button @click="open = !open"
+                        class="inline-flex items-center justify-center rounded-md p-2 text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/20">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-
-            {{-- NEW: Комнаты (mobile) --}}
-            <x-responsive-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
-                {{ __('Комнаты') }}
-            </x-responsive-nav-link>
-
-            {{-- NEW: Создать комнату (mobile) --}}
-            <button
-                type="button"
-                @click="createOpen = true; open = false"
-                class="w-full text-left px-4 py-2 text-sm text-indigo-700"
-            >+ {{ __('Создать комнату') }}</button>
+    {{-- Мобильное меню --}}
+    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-white/10 bg-black/50 backdrop-blur-md">
+        <div class="space-y-1 px-4 py-3">
+            <a href="{{ route('home') }}"
+               class="block rounded-lg px-3 py-2 text-sm font-medium
+                      {{ request()->routeIs('home') ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                Главная
+            </a>
+            <a href="{{ route('rooms.index') }}"
+               class="block rounded-lg px-3 py-2 text-sm font-medium
+                      {{ request()->routeIs('rooms.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                Комнаты
+            </a>
+            <button type="button"
+                    @click="createOpen = true; open = false"
+                    class="block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-indigo-300 hover:text-white hover:bg-indigo-500/10">
+                + Создать комнату
+            </button>
         </div>
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
+        <div class="border-t border-white/10 px-4 py-3">
+            <div class="text-sm font-medium text-white">{{ Auth::user()->name }}</div>
+            <div class="text-xs text-slate-400">{{ Auth::user()->email }}</div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
+                <a href="{{ route('profile.edit') }}"
+                   class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5">
+                    Профиль
+                </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                                           onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button
+                        class="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-300 hover:text-white hover:bg-white/5">
+                        Выйти
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
-    {{-- ===== NEW: Модалка создания комнаты ===== --}}
-    <div
-        x-cloak
-        x-show="createOpen"
-        x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center"
-        aria-modal="true" role="dialog"
-    >
-        <!-- backdrop -->
-        <div class="absolute inset-0 bg-black/40" @click="createOpen = false"></div>
+    {{-- Модалка создания комнаты (тёмная, стекло) --}}
+    <div x-cloak x-show="createOpen" x-transition.opacity
+         class="fixed inset-0 z-50 grid place-items-center p-4">
+        <div class="absolute inset-0 bg-black/60" @click="createOpen=false"></div>
 
-        <!-- dialog -->
-        <div
-            x-trap.noscroll.inert="createOpen"
-            class="relative z-10 w-full max-w-lg rounded-xl bg-white shadow-lg p-6"
-        >
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold">Создать комнату</h2>
-                <button class="text-gray-400 hover:text-gray-600" @click="createOpen = false">&times;</button>
+        <div x-trap.noscroll.inert="createOpen"
+             class="relative z-10 w-full max-w-xl rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-white">Создать комнату</h2>
+                <button @click="createOpen=false"
+                        class="rounded-lg px-2 py-1 text-slate-300 hover:bg-white/10 hover:text-white">&times;</button>
             </div>
 
             <form method="POST" action="{{ route('rooms.store') }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-medium">Название</label>
-                    <input name="name" required class="mt-1 w-full border rounded px-3 py-2" />
+                    <label class="block text-sm text-slate-300">Название</label>
+                    <input name="name" required
+                           class="mt-1 w-full rounded-xl border-0 bg-white/5 px-3 py-2 text-slate-100 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-indigo-400/70"/>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium">Описание</label>
-                    <textarea name="description" rows="3" class="mt-1 w-full border rounded px-3 py-2"></textarea>
+                    <label class="block text-sm text-slate-300">Описание</label>
+                    <textarea name="description" rows="3"
+                              class="mt-1 w-full rounded-xl border-0 bg-white/5 px-3 py-2 text-slate-100 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-indigo-400/70"></textarea>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="nav_is_private" name="is_private" value="1" x-model="isPrivate">
-                    <label for="nav_is_private">Приватная комната (вход по паролю)</label>
-                </div>
+                <label class="inline-flex select-none items-center gap-2">
+                    <input type="checkbox" id="nav_is_private" name="is_private" value="1" x-model="isPrivate"
+                           class="h-4 w-4 rounded border-white/20 bg-white/5 text-indigo-400 focus:ring-indigo-400/70">
+                    <span class="text-sm text-slate-300">Приватная комната (вход по паролю)</span>
+                </label>
 
                 <div x-show="isPrivate" x-transition>
                     <div class="mt-2">
-                        <label class="block text-sm font-medium">Пароль</label>
-                        <input type="password" name="password" class="mt-1 w-full border rounded px-3 py-2">
+                        <label class="block text-sm text-slate-300">Пароль</label>
+                        <input type="password" name="password"
+                               class="mt-1 w-full rounded-xl border-0 bg-white/5 px-3 py-2 text-slate-100 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-indigo-400/70">
                     </div>
                     <div class="mt-2">
-                        <label class="block text-sm font-medium">Подтверждение пароля</label>
-                        <input type="password" name="password_confirmation" class="mt-1 w-full border rounded px-3 py-2">
+                        <label class="block text-sm text-slate-300">Подтверждение пароля</label>
+                        <input type="password" name="password_confirmation"
+                               class="mt-1 w-full rounded-xl border-0 bg-white/5 px-3 py-2 text-slate-100 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-indigo-400/70">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium">Обложка</label>
-                    <input type="file" name="image" accept="image/*" class="mt-1">
-                    <p class="text-xs text-gray-500 mt-1">JPG/PNG до 2 МБ</p>
+                    <label class="block text-sm text-slate-300">Обложка</label>
+                    <input type="file" name="image" accept="image/*" class="mt-1 text-slate-200">
+                    <p class="mt-1 text-xs text-slate-400">JPG/PNG до 2 МБ</p>
                 </div>
 
-                {{-- owner_id перезапишется на сервере текущим пользователем; поле не обязательно --}}
-                {{-- <input type="hidden" name="owner_id" value="{{ auth()->id() }}"> --}}
-
                 <div class="flex items-center justify-end gap-3 pt-2">
-                    <button type="button" @click="createOpen = false" class="px-4 py-2 rounded border text-gray-700">
+                    <button type="button"
+                            @click="createOpen=false"
+                            class="rounded-xl border border-white/10 bg-white/0 px-4 py-2 text-slate-300 hover:bg-white/10">
                         Отмена
                     </button>
-                    <button class="px-4 py-2 rounded bg-indigo-600 text-white">
+                    <button
+                        class="rounded-xl bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/60">
                         Создать
                     </button>
                 </div>

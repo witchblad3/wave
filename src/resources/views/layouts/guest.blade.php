@@ -1,30 +1,53 @@
-<!DOCTYPE html>
+{{-- resources/views/layouts/guest.blade.php --}}
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-screen text-slate-100">
+{{-- Фон --}}
+<div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-800 animate-[bgShift_14s_ease-in-out_infinite]"></div>
+    <div class="absolute inset-0 opacity-20 [background:radial-gradient(rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:18px_18px]"></div>
+    <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-indigo-500/30"></div>
+    <div class="absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-fuchsia-500/30"></div>
+</div>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+{{-- Контент --}}
+<div class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md">
+        {{ $slot }}
+    </div>
+</div>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+{{-- Прелоадер (для всех форм с классом js-preload-on-submit) --}}
+<div id="global-preloader" class="fixed inset-0 hidden z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
+</div>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+<script>
+    document.addEventListener('submit', (e) => {
+        const form = e.target.closest('form.js-preload-on-submit');
+        if (!form) return;
+        const overlay = document.getElementById('global-preloader');
+        if (overlay) overlay.classList.remove('hidden');
+        const btn = form.querySelector('button[type="submit"], button:not([type])');
+        if (btn) {
+            btn.dataset.originalText = btn.innerHTML;
+            btn.innerHTML = 'Загрузка…';
+            btn.disabled = true;
+            btn.classList.add('opacity-70','cursor-not-allowed');
+        }
+    });
+</script>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
-        </div>
-    </body>
+<style>
+    @keyframes bgShift { 0%,100% { filter:hue-rotate(0deg) } 50% { filter:hue-rotate(20deg) } }
+</style>
+</body>
+{{-- resources/views/components/guest-layout.blade.php --}}
+
 </html>

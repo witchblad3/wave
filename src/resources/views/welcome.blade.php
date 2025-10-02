@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Мой сайт') }}</title>
     <meta name="color-scheme" content="light dark">
-
     <style>
         :root{
             --bg:#f6f7f9; --fg:#101114; --muted:#6b7280; --card:#ffffff; --border:#e5e7eb; --accent:#ef4444;
@@ -34,10 +33,7 @@
         .btn:hover{background:var(--btn-hover)}
         .btn.ghost{background:transparent; color:var(--fg)}
         .btn.ghost:hover{background-color:rgba(0,0,0,.06)}
-        @media (prefers-color-scheme: dark){
-            .btn.ghost:hover{background-color:rgba(255,255,255,.08)}
-        }
-
+        @media (prefers-color-scheme: dark){ .btn.ghost:hover{background-color:rgba(255,255,255,.08)} }
         .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:28px 24px; box-shadow:0 6px 30px rgba(0,0,0,.06)}
         .hero{display:grid; grid-template-columns:1.2fr; gap:18px}
         .title{font-size:clamp(28px, 3.2vw, 40px); line-height:1.2; margin:0}
@@ -48,6 +44,11 @@
     </style>
 </head>
 <body>
+@php
+    // Аккуратно определяем "домашнюю" ссылку для авторизованных
+    $homeUrl = Route::has('home') ? route('home') : url('/');
+@endphp
+
 <div class="wrap">
     <header>
         <div class="brand" aria-label="Логотип">
@@ -58,7 +59,7 @@
         @if (Route::has('login'))
             <nav>
                 @auth
-                    <a class="btn ghost" href="{{ url('/dashboard') }}">Dashboard</a>
+                    <a class="btn ghost" href="{{ $homeUrl }}">На главную</a>
                 @else
                     <a class="btn ghost" href="{{ route('login') }}">Войти</a>
                     @if (Route::has('register'))
@@ -72,11 +73,11 @@
     <main class="card hero" role="main">
         <section>
             <h1 class="title">Добро пожаловать на <span class="accent">{{ config('app.name', 'сайт') }}</span></h1>
-            <p class="lead">Лёгкая стартовая страница без лишнего — только главное. Можно сразу перейти в панель или войти на сайт.</p>
+            <p class="lead">Доступ к общению с коллегами и ничего лишнего</p>
 
             <div class="actions">
                 @auth
-                    <a class="btn" href="{{ url('/dashboard') }}">Перейти в Dashboard</a>
+                    <a class="btn" href="{{ $homeUrl }}">Перейти</a>
                 @else
                     @if (Route::has('register'))
                         <a class="btn" href="{{ route('register') }}">Создать аккаунт</a>

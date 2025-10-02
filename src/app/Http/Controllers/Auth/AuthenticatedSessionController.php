@@ -25,11 +25,12 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // редирект на именованный роут home + флажок для конфетти
+        return redirect()->intended(route('home', ['welcome' => 1]));
     }
+
 
     /**
      * Destroy an authenticated session.
@@ -42,6 +43,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }
