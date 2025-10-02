@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\Read\Room\RoomReadRepository;
 use App\Repositories\Read\Room\RoomReadRepositoryInterface;
+use App\Repositories\Read\User\UserReadRepository;
+use App\Repositories\Read\User\UserReadRepositoryInterface;
 use App\Repositories\Write\Room\RoomWriteRepository;
 use App\Repositories\Write\Room\RoomWriteRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(RoomReadRepositoryInterface::class, RoomReadRepository::class);
         $this->app->bind(RoomWriteRepositoryInterface::class, RoomWriteRepository::class);
+        $this->app->bind(UserReadRepositoryInterface::class, UserReadRepository::class);
     }
 
     /**

@@ -45,6 +45,14 @@ readonly class StoreRoomAction
 
         $this->roomWriteRepository->attachMember($room, $dto->ownerId, self::OWNER);
 
+        $participantIds = array_unique(
+            array_filter($dto->participantIds, fn ($id) => $id && $id !== $dto->ownerId)
+        );
+
+        foreach ($participantIds as $participantId) {
+            $this->roomWriteRepository->attachMember($room, $participantId);
+        }
+
         return $room;
     }
 

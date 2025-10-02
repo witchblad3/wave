@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Room\StoreRoomRequest;
+use App\Services\Room\Actions\CreateRoomAction;
 use App\Services\Room\Actions\IndexRoomAction;
 use App\Services\Room\Actions\StoreRoomAction;
 use App\Services\Room\Dto\StoreRoomDto;
@@ -23,9 +24,11 @@ class RoomController extends Controller
         return view('rooms.index', compact('result'));
     }
 
-    public function create()
+    public function create(CreateRoomAction $action)
     {
-        return view('rooms.create');
+        $users = $action->run(auth()->id());
+
+        return view('rooms.create', compact('users'));
     }
 
     /**

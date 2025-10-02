@@ -49,6 +49,21 @@
                 <input name="image" type="file" accept="image/*" class="mt-1 block">
             </div>
 
+            <div>
+                <label class="block text-sm font-medium">Участники</label>
+                @php($selectedParticipants = collect(old('participants', []))->map(fn($id) => (int) $id))
+                <select name="participants[]" multiple class="mt-1 w-full rounded border-gray-300">
+                    @forelse ($users as $user)
+                        <option value="{{ $user->id }}" {{ $selectedParticipants->contains($user->id) ? 'selected' : '' }}>
+                            {{ $user->name }} ({{ $user->email }})
+                        </option>
+                    @empty
+                        <option disabled>Нет доступных пользователей</option>
+                    @endforelse
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Выберите пользователей, которых нужно добавить в комнату сразу после создания.</p>
+            </div>
+
             <input type="hidden" name="owner_id" value="{{ auth()->id() }}">
 
             <div class="flex gap-3">
