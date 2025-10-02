@@ -50,7 +50,7 @@ readonly class StoreRoomAction
         );
 
         foreach ($participantIds as $participantId) {
-            $this->roomWriteRepository->attachMember($room, (int) $participantId);
+            $this->roomWriteRepository->attachMember($room, $participantId);
         }
 
         return $room;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Room\StoreRoomRequest;
-use App\Models\User;
+use App\Services\Room\Actions\CreateRoomAction;
 use App\Services\Room\Actions\IndexRoomAction;
 use App\Services\Room\Actions\StoreRoomAction;
 use App\Services\Room\Dto\StoreRoomDto;
@@ -24,18 +24,11 @@ class RoomController extends Controller
         return view('rooms.index', compact('result'));
     }
 
-    public function create()
+    public function create(CreateRoomAction $action)
     {
-        $currentUserId = auth()->id();
+        $users = $action->run(auth()->id());
 
-        $users = User::query()
-            ->when($currentUserId, fn ($query) => $query->where('id', '!=', $currentUserId))
-            ->orderBy('name')
-            ->get(['id', 'name', 'email']);
-
-        return view('rooms.create', [
-            'users' => $users,
-        ]);
+        return view('rooms.create', compact('users'));
     }
 
     /**

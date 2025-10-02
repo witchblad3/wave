@@ -93,7 +93,7 @@ class StoreRoomRequest extends FormRequest
 
     public function getParticipantIds(): array
     {
-        return array_map('intval', $this->input(self::PARTICIPANTS, []));
+        return $this->input(self::PARTICIPANTS, []);
     }
 
     public function messages(): array
